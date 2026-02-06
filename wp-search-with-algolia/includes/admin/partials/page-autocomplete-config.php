@@ -17,7 +17,7 @@
 	<br />
 	<?php esc_html_e( 'Use drag and drop to control the order of the sections in the autocomplete search dropdown menu.', 'wp-search-with-algolia' ); ?>
 </p>
-<table class="widefat table-autocomplete">
+<table class="widefat table-autocomplete striped">
 	<thead>
 		<tr>
 			<th style="width: 20px;"></th>
@@ -61,6 +61,17 @@
 					);
 					?>
 				</small>
+				<?php if ( ! empty( $index['debounce'] ) && $index['debounce'] > 0 ) : ?>
+					<br /><small>
+						<?php
+						printf(
+							// translators: placeholder is the custom debounce value.
+							esc_html__( 'Custom debounce timing: %s ms', 'wp-search-with-algolia' ),
+							esc_html( $index['debounce'] )
+						);
+						?>
+					</small>
+				<?php endif; ?>
 			</td>
 			<td>
 				<input type="text" name="algolia_autocomplete_config[<?php echo esc_attr( $index['index_id'] ); ?>][label]"  value="<?php echo esc_attr( $index['label'] ); ?>" />

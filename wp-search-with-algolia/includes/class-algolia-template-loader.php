@@ -36,9 +36,19 @@ class Algolia_Template_Loader {
 		$this->plugin = $plugin;
 
 		$settings = $this->plugin->get_settings();
+		$is_fse   = apply_filters( 'algolia_is_block_theme', false );
 		if (
 			! $this->should_load_autocomplete() &&
 			! $settings->should_override_search_with_instantsearch() &&
+			/**
+			 * Filters whether or not the current theme is a block based theme.
+			 *
+			 * WP Search with Algolia will help automatically detect and use this filter.
+			 *
+			 * @since 2.10.3
+			 *
+			 * @param bool $value Whether or not the current theme is block based. Default false.
+			 */
 			! apply_filters( 'algolia_is_block_theme', false )
 		) {
 			return;
@@ -95,6 +105,15 @@ class Algolia_Template_Loader {
 			'indices'              => [],
 			'autocomplete'         => [
 				'sources'        => $autocomplete_config->get_config(),
+
+				/**
+				 * Filters the CSS-style selector used to locate search inputs to add Autocomplete to.
+				 *
+				 * @since 1.0.0
+				 *
+				 * @param  string $value Selector to target with.
+				 * @return string $value Updated selector.
+				 */
 				'input_selector' => (string) apply_filters( 'algolia_autocomplete_input_selector', "input[name='s']:not(.no-autocomplete):not(#adminbar-search)" ),
 			],
 		];
@@ -109,7 +128,16 @@ class Algolia_Template_Loader {
 			$config['indices'][ $index->get_id() ] = $index->to_array();
 		}
 
-		// Give developers a last chance to alter the configuration.
+		/**
+		 * Filters the final result of the algolia config object to be used.
+		 *
+		 * Gives developers one last change to alter the configuration.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param  array $config Array of configuration options
+		 * @return array $config Final configuration.
+		 */
 		$config = (array) apply_filters( 'algolia_config', $config );
 
 		echo '<script type="text/javascript">var algolia = ' . wp_json_encode( $config ) . ';</script>';
@@ -158,7 +186,13 @@ class Algolia_Template_Loader {
 		wp_enqueue_script( 'algolia-autocomplete' );
 		wp_enqueue_script( 'algolia-autocomplete-noconflict' );
 
-		// Allow users to easily enqueue custom styles and scripts.
+		/**
+		 * Fires after Algolia Autocomplete assets have been enqueued.
+		 *
+		 * Allows users to easily enqueue custom styles and scripts that could depend on Autocomplete.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'algolia_autocomplete_scripts' );
 	}
 
@@ -180,6 +214,13 @@ class Algolia_Template_Loader {
 	public function template_loader( $template ) {
 		$settings = $this->plugin->get_settings();
 		if ( is_search() && $settings->should_override_search_with_instantsearch() ) {
+			$is_fse = apply_filters( 'algolia_is_block_theme', false );
+
+			// Don't need a custom instantsearch template file, but still need assets.
+			if ( $is_fse ) {
+				$this->load_instantsearch_assets();
+				return $template;
+			}
 
 			return $this->load_instantsearch_template();
 		}
@@ -188,14 +229,11 @@ class Algolia_Template_Loader {
 	}
 
 	/**
-	 * Load the instantsearch template.
+	 * Load the InstantSearch assets.
 	 *
-	 * @author  WebDevStudios <contact@webdevstudios.com>
-	 * @since   1.0.0
-	 *
-	 * @return string
+	 * @since 2.10.4
 	 */
-	public function load_instantsearch_template() {
+	public function load_instantsearch_assets() {
 		add_action(
 			'wp_enqueue_scripts',
 			function () {
@@ -205,10 +243,29 @@ class Algolia_Template_Loader {
 				// Enqueue the instantsearch.js library.
 				wp_enqueue_script( 'algolia-instantsearch' );
 
-				// Allow users to easily enqueue custom styles and scripts.
+				/**
+				 * Fires after Algolia Instantsearch assets have been enqueued.
+				 *
+				 * Allow users to easily enqueue custom styles and scripts that could depend on InstantSearch.
+				 *
+				 * @since 1.0.0
+				 */
 				do_action( 'algolia_instantsearch_scripts' );
 			}
 		);
+	}
+
+	/**
+	 * Load the InstantSearch template.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 *
+	 * @return string
+	 */
+	public function load_instantsearch_template() {
+		// Need both assets and Instantsearch template.
+		$this->load_instantsearch_assets();
 
 		$instantsearch_is_modern = $this->plugin->get_settings()->should_use_instantsearch_modern();
 		$chosen_file             = ( $instantsearch_is_modern ) ? 'instantsearch-modern.php' : 'instantsearch.php';
