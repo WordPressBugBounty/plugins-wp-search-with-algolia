@@ -3,8 +3,8 @@ Contributors: WebDevStudios, williamsba1, tw2113, mrasharirfan, scottbasgaard, g
 Tags: algolia, search, autocomplete, instantsearch, ai search
 Requires at least: 6.2.9
 Tested up to: 7.1
-Requires PHP: 7.4
-Stable tag: 2.14.1
+Requires PHP: 8.1
+Stable tag: 3.0.0
 License: GNU General Public License v2.0, MIT License
 
 Use Algolia AI Search & Discovery to power your website's search with AI-powered Autocomplete and InstantSearch for fast, accurate, relevant results.
@@ -57,7 +57,7 @@ Both versions index posts, pages, custom post types, terms, and users, and both 
 
 WP Search with Algolia Pro is $99, and includes six months of updates and technical support plus a 30-day money-back guarantee.
 
-**Pro requires WordPress 6.5 or higher, PHP 8.0 or higher, and WP Search with Algolia 2.10.2 or higher.** These are higher than this free plugin's own minimums, so check your server before purchasing.
+**Pro requires WordPress 6.5 or higher, PHP 8.1 or higher, and WP Search with Algolia 2.10.2 or higher.** These are higher than this free plugin's own minimums, so check your server before purchasing.
 
 Ready to go Pro? Check out [WP Search with Algolia Pro on Pluginize](https://pluginize.com/plugins/wp-search-with-algolia-pro/?utm_source=wpswa-free&utm_medium=readme&utm_campaign=pro-upgrade&utm_content=description)!
 
@@ -100,7 +100,7 @@ Yes. WP Search with Algolia Pro is an add-on, not a replacement. Keep this plugi
 
 = What are Pro's requirements? =
 
-Pro requires WordPress 6.5 or higher, PHP 8.0 or higher, and WP Search with Algolia 2.10.2 or higher. These minimums are higher than this free plugin's, so confirm your server meets them before purchasing. Once this plugin is installed, the **Algolia Search &rarr; Upgrade to Pro** screen checks your site against all three and tells you where you stand.
+Pro requires WordPress 6.5 or higher, PHP 8.1 or higher, and WP Search with Algolia 2.10.2 or higher. These minimums are higher than this free plugin's, so confirm your server meets them before purchasing. Once this plugin is installed, the **Algolia Search &rarr; Upgrade to Pro** screen checks your site against all three and tells you where you stand.
 
 = Is this plugin a fork? =
 
@@ -112,8 +112,8 @@ Yes. Because Algolia no longer supports their plugin, you will no longer receive
 
 = What are the minimum requirements? =
 
-* Requires WordPress 5.3+
-* PHP version 7.4 or greater
+* Requires WordPress 6.2.9+
+* PHP version 8.1 or greater
 * MySQL version 5.0 or greater (MySQL 5.6 or greater is recommended)
 * cURL PHP extension
 * mbstring PHP extension
@@ -147,6 +147,14 @@ All development is handled on [GitHub](https://github.com/WebDevStudios/wp-searc
 == Changelog ==
 
 Follow along with the changelog on [GitHub](https://github.com/WebDevStudios/wp-search-with-algolia/releases).
+
+= 3.0.0 =
+* Updated: Migrated the bundled Algolia SDK from v3 to v4.
+* Updated: `algoliasearch` JS client bumped from 4.18.0 to 4.25.2.
+* Security: Fixed missing authorization checks on the re-index and push-settings admin AJAX actions; both now require the `manage_options` capability and a valid nonce.
+* Fixed: WPCLI - Prevent index clearing when using `--all` but not specifying `--clear` as well.
+* Fixed: `Algolia_Index::get_index()` no longer returns `false` after the Algolia SDK v4 migration, preventing a fatal error in Pro (and any other SDK v3-style integration) when checking a post's index status.
+* Changed: Minimum required PHP version bumped to 8.1 to match the bundled Algolia SDK v4's own requirement.
 
 = 2.14.1 =
 * Fixed: Settings, Autocomplete, and Native Search admin notices no longer appear on unrelated wp-admin screens (e.g. WooCommerce Edit Order).
